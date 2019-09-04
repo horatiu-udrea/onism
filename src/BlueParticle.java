@@ -17,7 +17,7 @@ public class BlueParticle
     {
         this.position = position.copy();
         this.speed = new PVector(p.random(-1,1), p.random(-1,1.6f));
-        this.acceleration = new PVector(0, -0.04f);
+        this.acceleration = new PVector(0, 0.04f);
         this.targetSize = size;
     }
 

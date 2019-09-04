@@ -1,4 +1,6 @@
+import java.util.ArrayDeque;
 import java.util.HashSet;
+import java.util.Queue;
 import java.util.Set;
 
 import processing.core.PApplet;
@@ -8,11 +10,14 @@ public class OnismApplet extends PApplet
 {
     PVector redCenter = new PVector();
     PVector blueCenter = new PVector();
+    PVector purpleCenter = new PVector();
     Set<BlueParticle> blueParticles;
     Set<RedParticle> redParticles;
-    boolean red;
-    boolean blue;
-
+    Queue<PurpleParticle> purpleParticles;
+    int particleType;
+    final static int BLUE = 1;
+    final static int RED = 2;
+    final static int PURPLE = 3;
     public static void main(String[] args)
     {
         PApplet.main(OnismApplet.class, args);
@@ -30,13 +35,29 @@ public class OnismApplet extends PApplet
         frameRate(60);
         blueParticles = new HashSet<>();
         redParticles = new HashSet<>();
+        purpleParticles=new ArrayDeque<PurpleParticle>();
     }
 
     @Override
     public void draw()
     {
-        background(255);
-        if (red)
+        background(0);
+        if (particleType == PURPLE)
+        {
+            purpleCenter.x = mouseX;
+            purpleCenter.y = mouseY;
+        }
+        float rate3 = constrain(map(dist(mouseX, mouseY, pmouseX, pmouseY), 0, 30, 4.5f, 1), 1, 4);
+        int rateInt3 = ceil(rate3);
+        if (frameCount % rateInt3 == 0)
+        {
+            for (int i = 0; i < 6; i++)
+            {
+                purpleParticles.add(new PurpleParticle(purpleCenter, random(10, 30), this));
+            }
+        }
+        purpleParticles.forEach((particle) -> particle.draw(this));
+        if (particleType == RED)
         {
             redCenter.x = mouseX;
             redCenter.y = mouseY;
@@ -51,7 +72,7 @@ public class OnismApplet extends PApplet
             }
         }
         redParticles.forEach((particle) -> particle.draw(this));
-        if (blue)
+        if (particleType == BLUE)
         {
             blueCenter.x = mouseX;
             blueCenter.y = mouseY;
@@ -74,13 +95,13 @@ public class OnismApplet extends PApplet
         switch (key)
         {
             case 'a':
-                redCenter.x += -1;
-                red = true;
-                blue = false;
+                particleType = RED;
                 break;
             case 'd':
-                blue = true;
-                red = false;
+                particleType = BLUE;
+                break;
+            case 's':
+                particleType = PURPLE;
                 break;
         }
     }
